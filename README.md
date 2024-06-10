@@ -58,8 +58,8 @@ YouTube downloader around the usage of yt_dlp tool but with clean architecture a
 
 ### Usage
 
-- `$ make` # This will show you what's available for you to do in the layer, currently only building the package in this case
+- `$ make` # This will show you what's available for you to do
 ![make options](resources/images/make_options.png)
-- `$ make build` # This will build the package(s) for all the layers
+- `$ make build-all` # This will build the package(s) for all the layers
 
 ---
