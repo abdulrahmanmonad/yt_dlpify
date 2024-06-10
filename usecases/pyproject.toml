@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "usecases"
+version = "0.1.0"
+description = ""
+authors = ["𝕬𝖇𝖉𝖚𝖑𝖗𝖆𝖍𝖒𝖆𝖓 𝕸𝖆𝖟𝖍𝖆𝖗 <abdulrahmanm.career@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.2"
+coverage = "^7.5.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.coverage.report]
+exclude_also = [
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
