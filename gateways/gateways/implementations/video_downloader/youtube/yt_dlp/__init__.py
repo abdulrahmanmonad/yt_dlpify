@@ -84,6 +84,16 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
                         error_msg="There is no internet connectivity !", 
                         invalid_entity=to_be_downloaded_youtube_video,
                     )
+                elif "Video unavailable" in str(ex):
+                    return YouTubeVideoDownloadError(
+                        error_msg=f"This url [{video_url}] doesn't exist !",
+                        invalid_entity=to_be_downloaded_youtube_video
+                    )
+                elif "Requested format is not available" in str(ex):
+                    return YouTubeVideoDownloadError(
+                        error_msg=f"This video resolution [{video_resolution}] is not available for this video !",
+                        invalid_entity=to_be_downloaded_youtube_video
+                    )
                 
                 return YouTubeVideoDownloadError(
                     error_msg=str(ex), invalid_entity=to_be_downloaded_youtube_video

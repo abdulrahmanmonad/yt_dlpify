@@ -7,9 +7,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-usecases = {path = "../usecases/dist/usecases-0.1.0-py3-none-any.whl"}
+usecases = { path = "../usecases/dist/usecases-0.1.0-py3-none-any.whl" }
 yt-dlp = "^2024.5.27"
 
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.2.2"
+coverage = "^7.5.3"
 
 [build-system]
 requires = ["poetry-core"]

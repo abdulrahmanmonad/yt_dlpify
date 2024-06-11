@@ -32,11 +32,11 @@ class YtDlpYouTubeVideoMetadataFetcher(YouTubeVideoMetadataFetcherInterface):
                     if "(" not in format.get("format"):
                         formats.append(
                             YouTubeVideoFormat(
-                                video_format_id=format.get("format_id", "NA"),
-                                video_bit_rate=format.get("vbr", "NA"),
-                                video_fps=format.get("fps", "NA"),
-                                video_height=format.get("height", "NA"),
-                                video_width=format.get("width", "NA"),
+                                video_format_id=str(format.get("format_id", "NA")),
+                                video_bit_rate=str(format.get("vbr", "NA")),
+                                video_fps=str(format.get("fps", "NA")),
+                                video_height=str(format.get("height", "NA")),
+                                video_width=str(format.get("width", "NA")),
                             )
                         )
 
@@ -47,6 +47,17 @@ class YtDlpYouTubeVideoMetadataFetcher(YouTubeVideoMetadataFetcherInterface):
                     video_formats=formats,
                 )
             except Exception as ex:
+                if "Failed to extract any player response" in str(ex):
+                    return YouTubeVideoMetadataFetchingError(
+                        error_msg="There is no internet connectivity !",
+                        invalid_entity=to_be_metadata_fetched_video,
+                    )
+                elif "is not a valid URL" in str(ex):
+                    return YouTubeVideoMetadataFetchingError(
+                        error_msg=f"This url [{video_url}] doesn't exist !",
+                        invalid_entity=to_be_metadata_fetched_video,
+                    )
+
                 return YouTubeVideoMetadataFetchingError(
                     error_msg=str(ex), invalid_entity=to_be_metadata_fetched_video
                 )
