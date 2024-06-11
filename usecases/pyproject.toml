@@ -7,6 +7,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+domain = {path = "../domain/dist/domain-0.1.0-py3-none-any.whl"}
 
 
 [tool.poetry.group.test.dependencies]
