@@ -1,0 +1,92 @@
+from domain.entity.video.youtube import (
+    DownloadedYouTubeVideo,
+    YouTubeVideoFormat,
+    YouTubeVideoMetadata,
+)
+
+valid_downloaded_youtube_video = DownloadedYouTubeVideo(
+    video_title="Small short test video",
+    channel_id="UCBJjJJIUgliRQd7z-cISj8g",
+    channel_title="Dead channel",
+    channel_url="https://www.youtube.com/channel/UCBJjJJIUgliRQd7z-cISj8g",
+    video_url="https://www.youtube.com/watch?v=zGDzdps75ns",
+    resolution=144,
+)
+
+valid_video_metadata = YouTubeVideoMetadata(
+    video_title="Small short test video",
+    video_url="https://www.youtube.com/watch?v=zGDzdps75ns",
+    video_formats=[
+        YouTubeVideoFormat(
+            video_bit_rate="168.093",
+            video_width="256",
+            video_height="144",
+            video_fps="30.0",
+            video_format_id="269",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="95.87",
+            video_width="256",
+            video_height="144",
+            video_fps="30.0",
+            video_format_id="603",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="331.946",
+            video_width="426",
+            video_height="240",
+            video_fps="30.0",
+            video_format_id="229",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="85.342",
+            video_width="426",
+            video_height="240",
+            video_fps="30.0",
+            video_format_id="604",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="254.813",
+            video_width="640",
+            video_height="360",
+            video_fps="30.0",
+            video_format_id="230",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="193.488",
+            video_width="640",
+            video_height="360",
+            video_fps="30.0",
+            video_format_id="605",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="342.241",
+            video_width="854",
+            video_height="480",
+            video_fps="30.0",
+            video_format_id="231",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="228.691",
+            video_width="854",
+            video_height="480",
+            video_fps="30.0",
+            video_format_id="606",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="890.539",
+            video_width="1280",
+            video_height="720",
+            video_fps="60.0",
+            video_format_id="311",
+        ),
+        YouTubeVideoFormat(
+            video_bit_rate="417.239",
+            video_width="1280",
+            video_height="720",
+            video_fps="60.0",
+            video_format_id="612",
+        ),
+    ],
+    video_thumbnail_url="https://i.ytimg.com/vi_webp/zGDzdps75ns/maxresdefault.webp",
+)
