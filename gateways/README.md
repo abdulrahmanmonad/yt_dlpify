@@ -3,7 +3,8 @@
 ## This layer provides the followings
 
 - [X] Implementations
-  -
+  - [X] YtDlpYouTubeDownloader
+  - [X] YtDlpYouTubeVideoMetadataFetcher
 
 ---
 
