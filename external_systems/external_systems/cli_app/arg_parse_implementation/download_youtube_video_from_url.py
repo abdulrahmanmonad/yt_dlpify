@@ -8,7 +8,7 @@ from gateways.implementations.video_downloader.youtube.yt_dlp import (
     YtDlpYouTubeDownloader,
 )
 from usecases.input.entity.error.generic_usecase import UseCaseExecutionError
-from usecases.output.interface.video_downloading.youtube.from_url_usecase import (
+from usecases.output.video_downloading.youtube.from_url_usecase import (
     DownloadYouTubeVideoFromUrlUseCase,
 )
 
