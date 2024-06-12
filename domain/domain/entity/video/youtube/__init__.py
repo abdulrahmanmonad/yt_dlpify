@@ -8,6 +8,12 @@ class ToBeDownloadedYouTubeVideo:
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
+class ToBeDownloadedYouTubeVideos:
+    urls_file_path: str
+    videos_resolution: int
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
 class ToBeMetadataFetchedYouTubeVideo:
     video_url: str
 
