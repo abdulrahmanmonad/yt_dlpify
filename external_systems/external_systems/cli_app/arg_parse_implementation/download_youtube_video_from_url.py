@@ -73,7 +73,7 @@ def download(
         download_retries=download_retries,
         on_progress_callback=lambda on_progress: print(
             f"Downloading [{on_progress.download_ratio}] of [{on_progress.video_title[:29]}] "
-            + f"at [{on_progress.download_speed}] and ETA of [{on_progress.download_eta}] Seconds"
+            + f"at [{on_progress.download_speed}] and ETA of [{on_progress.download_eta}]"
         ),
         on_complete_callback=lambda on_completion: print(
             f"Completed Downloading [{on_completion.video_title}] and saved at [{on_completion.downloaded_file_path}]"

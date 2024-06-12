@@ -41,7 +41,7 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
                         video_title=path.basename(status_obj.get("filename", "NA")),
                         video_size=video_size_bytes,
                         video_resolution=f"{video_resolution}P",
-                        download_speed=f"{(status_obj.get("speed", 1)) / 1000000} Mb",
+                        download_speed=f"{(status_obj.get("speed", 1)) / 1000000:.2f} Mb",
                         download_eta=f"{status_obj.get("eta", "NA")} second",
                         download_ratio=f"{(downloaded_bytes / video_size_bytes) * 100:.2f} %",
                     )
