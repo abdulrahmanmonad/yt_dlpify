@@ -96,7 +96,7 @@ def download(
         on_progress_callback=lambda on_progress: print_in_green(
             f"Downloaded [{on_progress.download_ratio}] of [{on_progress.video_title[:29]} ...] "
             + f"at [{on_progress.download_speed}] and ETA of [{on_progress.download_eta}] "
-            + f"in [{on_progress.video_resolution}P]"
+            + f"in [{on_progress.video_resolution}]"
         ),
         on_complete_callback=lambda on_completion: print_in_green(
             f"Completed Downloading [{on_completion.video_title}] and saved at [{on_completion.downloaded_file_path}]"
