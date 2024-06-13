@@ -2,14 +2,17 @@
 
 from argparse import ArgumentParser, Namespace
 
-from domain.entity.error.video.youtube import YouTubeVideoDownloadError
+from domain.entity.error.video.youtube import (
+    YouTubeVideoDownloadError,
+    YouTubeVideosDownloadError,
+)
 from domain.entity.video.youtube import DownloadedYouTubeVideo
 from gateways.implementations.video_downloader.youtube.yt_dlp import (
     YtDlpYouTubeDownloader,
 )
 from usecases.input.entity.error.generic_usecase import UseCaseExecutionError
-from usecases.output.video_downloading.youtube.from_url_usecase import (
-    DownloadYouTubeVideoFromUrlUseCase,
+from usecases.output.video_downloading.youtube.from_urls_file_usecase import (
+    DownloadYouTubeVideoFromUrlsFileUseCase,
 )
 
 from external_systems.utilities.functions import (
@@ -20,25 +23,25 @@ from external_systems.utilities.functions import (
 
 
 def parse_args() -> Namespace:
-    parser = ArgumentParser("Download YouTube Video From An Url")
+    parser = ArgumentParser("Download YouTube Video From An URLS File")
     parser.add_argument(
-        "-u",
-        "--url",
-        help="The url of the video that needs to be downloaded",
+        "-uf",
+        "--urls-file",
+        help="The urls file of the video(s) that needs to be downloaded",
         type=str,
         required=True,
     )
     parser.add_argument(
         "-r",
         "--res",
-        help="The video resolution that needs to be downloaded",
+        help="The video(s) resolution that needs to be downloaded",
         type=int,
         required=True,
     )
     parser.add_argument(
         "-d",
         "--dst",
-        help="The destination where the video will be downloaded into",
+        help="The destination where the video(s) will be downloaded into",
         type=str,
         required=True,
     )
@@ -56,27 +59,40 @@ def parse_args() -> Namespace:
         type=int,
         required=False,
     )
+    parser.add_argument(
+        "-pd",
+        "--parallel_downloads",
+        help="The number of parallel downloads",
+        type=int,
+        required=False,
+    )
 
     return parser.parse_args()
 
 
 def download(
     *,
-    video_url: str,
-    video_resolution: int,
+    urls_file_path: str,
+    videos_resolution: int,
     destination_path: str,
     download_timeout: int,
     download_retries: int,
-) -> UseCaseExecutionError[YouTubeVideoDownloadError] | DownloadedYouTubeVideo:
+    parallel_downloads: int,
+) -> tuple[
+    list[UseCaseExecutionError[YouTubeVideosDownloadError]]
+    | list[UseCaseExecutionError[YouTubeVideoDownloadError]],
+    list[DownloadedYouTubeVideo],
+]:
     youtube_downloader = YtDlpYouTubeDownloader()
-    return DownloadYouTubeVideoFromUrlUseCase(
+    return DownloadYouTubeVideoFromUrlsFileUseCase(
         youtube_video_downloader=youtube_downloader
     ).execute(
-        video_url=video_url,
-        video_resolution=video_resolution,
+        urls_file_path=urls_file_path,
+        videos_resolution=videos_resolution,
         destination_path=destination_path,
         download_timeout=download_timeout,
         download_retries=download_retries,
+        parallel_downloads=parallel_downloads,
         on_progress_callback=lambda on_progress: print_in_green(
             f"Downloaded [{on_progress.download_ratio}] of [{on_progress.video_title[:29]} ...] "
             + f"at [{on_progress.download_speed}] and ETA of [{on_progress.download_eta}]"
@@ -89,35 +105,44 @@ def download(
 
 def main() -> None:
     args: Namespace = parse_args()
-    url, resolution, dst, timeout, retries = (
-        args.url,
+    urls_file, resolution, dst, timeout, retries, parallel_downloads = (
+        args.urls_file.strip(),
         args.res,
         args.dst.strip(),
         args.download_timeout,
         args.download_retries,
+        args.parallel_downloads,
     )
 
-    download_result: (
-        UseCaseExecutionError[YouTubeVideoDownloadError] | DownloadedYouTubeVideo
-    ) = download(
-        video_url=url,
-        video_resolution=resolution,
+    download_errors, download_successes = download(
+        urls_file_path=urls_file,
+        videos_resolution=resolution,
         destination_path=dst,
         download_timeout=timeout,
         download_retries=retries,
+        parallel_downloads=parallel_downloads,
     )
 
     print()
 
-    if isinstance(download_result, UseCaseExecutionError):
-        print_in_red(
-            f"Error downloading video ➙ [{download_result.invalid_entity.invalid_entity.video_url}] "
-            + f"for the reason ➙ [{download_result.invalid_entity.error_msg}] ..."
-        )
-    else:
-        print_in_cyan(
-            f"Successfully downloaded video ➙ [{download_result.video_title}] ..."
-        )
+    if len(download_errors) > 0:
+        print_in_red("Downloading Errors ⬎")
+        for error in download_errors:
+            print_in_red(
+                f"\tError downloading video ➙ [{error.invalid_entity.invalid_entity}] "
+                + f"for the reason ➙ [{error.invalid_entity.error_msg}] ..."
+            )
+
+        print()
+
+    if len(download_successes) > 0:
+        print_in_cyan("Downloading Successes ⬎")
+        for success in download_successes:
+            print_in_cyan(
+                f"\tSuccessfully downloaded video ➙ [{success.video_title}] ..."
+            )
+
+        print()
 
 
 if __name__ == "__main__":
