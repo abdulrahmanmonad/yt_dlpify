@@ -37,7 +37,9 @@ class DownloadYouTubeVideoFromUrlUseCase(GenericUseCaseInterface):
                 invalid_entity=YouTubeVideoDownloadError(
                     error_msg=f"This destination path [{destination_path}] doesn't exist !",
                     invalid_entity=ToBeDownloadedYouTubeVideo(
-                        video_url=video_url, resolution=video_resolution
+                        video_url=video_url,
+                        resolution=video_resolution,
+                        destination_path=destination_path,
                     ),
                 ),
             )

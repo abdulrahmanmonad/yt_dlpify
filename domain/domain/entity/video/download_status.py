@@ -1,4 +1,10 @@
 from dataclasses import dataclass
+from enum import Enum
+
+
+class DownloadingStatus(Enum):
+    STARTED = "STARTED"
+    FINISHED = "FINISHED"
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
