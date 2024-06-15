@@ -3,13 +3,26 @@
 from argparse import ArgumentParser, Namespace
 
 from domain.entity.error.video.youtube import YouTubeVideoDownloadError
+from domain.entity.video.download_status import DownloadingStatus, OnCompletionStatus
 from domain.entity.video.youtube import DownloadedYouTubeVideo
+from gateways.implementations.repository.video_download_tracker.peewee_implementation import (
+    PeeweeDownloadingTracker,
+)
 from gateways.implementations.video_downloader.youtube.yt_dlp import (
     YtDlpYouTubeDownloader,
+)
+from gateways.implementations.video_metadata_fetcher.youtube.yt_dlp import (
+    YtDlpYouTubeVideoMetadataFetcher,
 )
 from usecases.input.entity.error.generic_usecase import UseCaseExecutionError
 from usecases.output.video_downloading.youtube.from_url_usecase import (
     DownloadYouTubeVideoFromUrlUseCase,
+)
+from usecases.output.video_metadata_fetching.youtube.from_url_usecase import (
+    FetchYouTubeVideoMetadataFromUrlUseCase,
+)
+from usecases.output.video_persisting.video_download_tracking.update_video_download_tracking_usecase import (
+    UpdateVideoDownloadTrackingUseCase,
 )
 
 from external_systems.utilities.functions import (
@@ -64,10 +77,39 @@ def download(
     *,
     video_url: str,
     video_resolution: int,
+    video_title: str,
     destination_path: str,
     download_timeout: int,
     download_retries: int,
 ) -> UseCaseExecutionError[YouTubeVideoDownloadError] | DownloadedYouTubeVideo:
+    UpdateVideoDownloadTrackingUseCase(
+        download_tracking_repository=PeeweeDownloadingTracker(
+            database_destination_path=destination_path
+        )
+    ).execute(
+        video_url=video_url,
+        video_resolution=video_resolution,
+        video_title=video_title,
+        destination_path=destination_path,
+        downloading_status=DownloadingStatus.STARTED,
+    )
+
+    def __on_complete(on_completion: OnCompletionStatus) -> None:
+        UpdateVideoDownloadTrackingUseCase(
+            download_tracking_repository=PeeweeDownloadingTracker(
+                database_destination_path=destination_path
+            )
+        ).execute(
+            video_url=video_url,
+            video_resolution=video_resolution,
+            video_title=video_title,
+            destination_path=destination_path,
+            downloading_status=DownloadingStatus.FINISHED,
+        )
+        print_in_green(
+            f"Completed Downloading [{on_completion.video_title}] and saved at [{on_completion.downloaded_file_path}]"
+        )
+
     youtube_downloader = YtDlpYouTubeDownloader()
     return DownloadYouTubeVideoFromUrlUseCase(
         youtube_video_downloader=youtube_downloader
@@ -82,9 +124,7 @@ def download(
             + f"at [{on_progress.download_speed}] and ETA of [{on_progress.download_eta}] "
             + f"in [{on_progress.video_resolution}]"
         ),
-        on_complete_callback=lambda on_completion: print_in_green(
-            f"Completed Downloading [{on_completion.video_title}] and saved at [{on_completion.downloaded_file_path}]"
-        ),
+        on_complete_callback=__on_complete,
     )
 
 
@@ -98,11 +138,23 @@ def main() -> None:
         args.download_retries,
     )
 
+    metadata_fetch_status = FetchYouTubeVideoMetadataFromUrlUseCase(
+        youtube_metadata_fetcher=YtDlpYouTubeVideoMetadataFetcher()
+    ).execute(video_url=url)
+
+    if isinstance(metadata_fetch_status, UseCaseExecutionError):
+        print_in_red(
+            f"Error downloading video ➙ [{url}] "
+            + f"for the reason ➙ [{metadata_fetch_status.invalid_entity.error_msg}] ..."
+        )
+        exit(1)
+
     download_result: (
         UseCaseExecutionError[YouTubeVideoDownloadError] | DownloadedYouTubeVideo
     ) = download(
         video_url=url,
         video_resolution=resolution,
+        video_title=metadata_fetch_status.video_title,
         destination_path=dst,
         download_timeout=timeout,
         download_retries=retries,

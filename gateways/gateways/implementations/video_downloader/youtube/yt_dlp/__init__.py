@@ -27,7 +27,7 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
         on_complete_callback: Callable[[OnCompletionStatus], Any],
     ) -> YouTubeVideoDownloadError | DownloadedYouTubeVideo:
         to_be_downloaded_youtube_video = ToBeDownloadedYouTubeVideo(
-            video_url=video_url, resolution=video_resolution
+            video_url=video_url, resolution=video_resolution, destination_path=destination_path
         )
         
         def __on_progress_hook(status_obj) -> None:

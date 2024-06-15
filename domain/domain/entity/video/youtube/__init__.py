@@ -5,12 +5,14 @@ from dataclasses import dataclass
 class ToBeDownloadedYouTubeVideo:
     video_url: str
     resolution: int
+    destination_path: str
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
 class ToBeDownloadedYouTubeVideos:
     urls_file_path: str
     videos_resolution: int
+    destination_path: str
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

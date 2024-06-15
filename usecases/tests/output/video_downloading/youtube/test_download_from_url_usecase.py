@@ -53,7 +53,9 @@ def test_happy_path() -> None:
 def test_invalid_destination_path_path() -> None:
     destination_path: str = "invalid"
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url=generate_random_url(), resolution=144
+        video_url=generate_random_url(),
+        resolution=144,
+        destination_path=destination_path,
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This destination path [{destination_path}] doesn't exist !",
@@ -79,7 +81,9 @@ def test_invalid_destination_path_path() -> None:
 def test_invalid_download_path() -> None:
     destination_path: str = mkdtemp()
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url=generate_random_url(), resolution=144
+        video_url=generate_random_url(),
+        resolution=144,
+        destination_path=destination_path,
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This url [{to_be_downloaded_video.video_url}] doesn't exist !",

@@ -46,7 +46,9 @@ def test_happy_path() -> None:
 def test_invalid_destination_path_path() -> None:
     destination_path: str = "invalid"
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url=valid_downloaded_youtube_video.video_url, resolution=144
+        video_url=valid_downloaded_youtube_video.video_url,
+        resolution=144,
+        destination_path=destination_path,
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This destination path [{destination_path}] doesn't exist !",
@@ -71,7 +73,9 @@ def test_invalid_video_resolution_path() -> None:
     destination_path: str = mkdtemp()
     resolution = 100
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url=valid_downloaded_youtube_video.video_url, resolution=100
+        video_url=valid_downloaded_youtube_video.video_url,
+        resolution=100,
+        destination_path=destination_path,
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This video resolution [{resolution}] is not available for this video !",
@@ -95,7 +99,7 @@ def test_invalid_video_resolution_path() -> None:
 def test_invalid_download_path() -> None:
     destination_path: str = mkdtemp()
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url="invalid_url", resolution=144
+        video_url="invalid_url", resolution=144, destination_path=destination_path
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This url [{to_be_downloaded_video.video_url}] doesn't exist !",

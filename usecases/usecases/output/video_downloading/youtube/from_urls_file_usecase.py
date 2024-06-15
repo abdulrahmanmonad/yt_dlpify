@@ -54,6 +54,7 @@ class DownloadYouTubeVideoFromUrlsFileUseCase(GenericUseCaseInterface):
                         invalid_entity=ToBeDownloadedYouTubeVideos(
                             urls_file_path=urls_file_path,
                             videos_resolution=videos_resolution,
+                            destination_path=destination_path,
                         ),
                     ),
                 )
