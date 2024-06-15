@@ -6,13 +6,20 @@ from domain.entity.error.video.youtube import (
     YouTubeVideoDownloadError,
     YouTubeVideosDownloadError,
 )
+from domain.entity.video.download_status import DownloadingStatus
 from domain.entity.video.youtube import DownloadedYouTubeVideo
+from gateways.implementations.repository.video_download_tracker.peewee_implementation import (
+    PeeweeDownloadingTracker,
+)
 from gateways.implementations.video_downloader.youtube.yt_dlp import (
     YtDlpYouTubeDownloader,
 )
 from usecases.input.entity.error.generic_usecase import UseCaseExecutionError
 from usecases.output.video_downloading.youtube.from_urls_file_usecase import (
     DownloadYouTubeVideoFromUrlsFileUseCase,
+)
+from usecases.output.video_persisting.video_download_tracking.update_video_download_tracking_usecase import (
+    UpdateVideoDownloadTrackingUseCase,
 )
 
 from external_systems.utilities.functions import (
@@ -129,6 +136,19 @@ def main() -> None:
     if len(download_errors) > 0:
         print_in_red("Downloading Errors ⬎")
         for error in download_errors:
+            if isinstance(error.invalid_entity, YouTubeVideoDownloadError):
+                UpdateVideoDownloadTrackingUseCase(
+                    download_tracking_repository=PeeweeDownloadingTracker(
+                        database_destination_path=error.invalid_entity.invalid_entity.destination_path
+                    )
+                ).execute(
+                    video_url=error.invalid_entity.invalid_entity.video_url,
+                    video_resolution=resolution,
+                    video_title="NA",
+                    destination_path=dst,
+                    downloading_status=DownloadingStatus.STARTED,
+                )
+
             print_in_red(
                 f"\tError downloading video ➙ [{error.invalid_entity.invalid_entity}] "
                 + f"for the reason ➙ [{error.invalid_entity.error_msg}] ..."
@@ -139,6 +159,18 @@ def main() -> None:
     if len(download_successes) > 0:
         print_in_cyan("Downloading Successes ⬎")
         for success in download_successes:
+            UpdateVideoDownloadTrackingUseCase(
+                download_tracking_repository=PeeweeDownloadingTracker(
+                    database_destination_path=error.invalid_entity.invalid_entity.destination_path
+                )
+            ).execute(
+                video_url=success.video_url,
+                video_resolution=success.resolution,
+                video_title=success.video_title,
+                destination_path=dst,
+                downloading_status=DownloadingStatus.FINISHED,
+            )
+
             print_in_cyan(
                 f"\tSuccessfully downloaded video ➙ [{success.video_title}] ..."
             )
