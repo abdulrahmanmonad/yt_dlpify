@@ -7,6 +7,7 @@ from tests.utilities.shared.functions import (
     generate_random_url,
 )
 from tests.utilities.video_download_tracking import DummyDownloadingTrackerInterface
+from usecases.input.entity.error.generic_usecase import UseCaseExecutionError
 from usecases.input.entity.error.repository import VideoTrackingRepositoryUpdateError
 from usecases.output.video_persisting.video_download_tracking.update_video_download_tracking_usecase import (
     UpdateVideoDownloadTrackingUseCase,
@@ -21,6 +22,7 @@ def test_happy_path() -> None:
     ).execute(
         video_url=generate_random_url(),
         video_resolution=144,
+        video_title=generate_random_string_without_digits(),
         destination_path=mkdtemp(),
         downloading_status=DownloadingStatus.FINISHED,
     )
@@ -37,12 +39,14 @@ def test_invalid_destination_path_path() -> None:
     ).execute(
         video_url=generate_random_url(),
         video_resolution=144,
+        video_title=generate_random_string_without_digits(),
         destination_path=destination_path,
         downloading_status=DownloadingStatus.FINISHED,
     )
 
-    assert isinstance(update_status, VideoTrackingRepositoryUpdateError)
+    assert isinstance(update_status, UseCaseExecutionError)
+    assert isinstance(update_status.invalid_entity, VideoTrackingRepositoryUpdateError)
     assert (
-        update_status.error_msg
+        update_status.invalid_entity.error_msg
         == f"This destination path [{destination_path}] doesn't exist !"
     )

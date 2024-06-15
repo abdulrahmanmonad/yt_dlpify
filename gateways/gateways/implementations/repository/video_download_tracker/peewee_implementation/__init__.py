@@ -41,6 +41,7 @@ class PeeweeDownloadingTracker(DownloadingTrackerInterface):
         *,
         video_url: str,
         video_resolution: int,
+        video_title: str,
         destination_path: str,
         downloading_status: DownloadingStatus
     ) -> VideoTrackingRepositoryUpdateError | None:
@@ -50,6 +51,7 @@ class PeeweeDownloadingTracker(DownloadingTrackerInterface):
                 .insert(
                     video_url=video_url,
                     video_resolution=video_resolution,
+                    video_title=video_title,
                     destination_path=destination_path,
                     downloading_status=downloading_status.value,
                 )

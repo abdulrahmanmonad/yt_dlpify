@@ -8,8 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 yt-dlp = "^2024.5.27"
-usecases = {path = "../usecases/dist/usecases-0.1.0-py3-none-any.whl"}
 peewee = "^3.17.5"
+usecases = {path = "../usecases/dist/usecases-0.1.0-py3-none-any.whl"}
 
 
 [tool.poetry.group.test.dependencies]

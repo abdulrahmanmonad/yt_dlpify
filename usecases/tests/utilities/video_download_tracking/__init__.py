@@ -19,6 +19,7 @@ class DummyDownloadingTrackerInterface(DownloadingTrackerInterface):
         *,
         video_url: str,
         video_resolution: int,
+        video_title: str,
         destination_path: str,
         downloading_status: DownloadingStatus
     ) -> VideoTrackingRepositoryUpdateError | None:
