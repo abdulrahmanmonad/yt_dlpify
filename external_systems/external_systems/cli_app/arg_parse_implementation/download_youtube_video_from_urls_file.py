@@ -139,7 +139,7 @@ def main() -> None:
             if isinstance(error.invalid_entity, YouTubeVideoDownloadError):
                 UpdateVideoDownloadTrackingUseCase(
                     download_tracking_repository=PeeweeDownloadingTracker(
-                        database_destination_path=error.invalid_entity.invalid_entity.destination_path
+                        database_destination_path=dst
                     )
                 ).execute(
                     video_url=error.invalid_entity.invalid_entity.video_url,
@@ -161,7 +161,7 @@ def main() -> None:
         for success in download_successes:
             UpdateVideoDownloadTrackingUseCase(
                 download_tracking_repository=PeeweeDownloadingTracker(
-                    database_destination_path=error.invalid_entity.invalid_entity.destination_path
+                    database_destination_path=dst
                 )
             ).execute(
                 video_url=success.video_url,
