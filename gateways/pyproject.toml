@@ -9,11 +9,16 @@ readme = "README.md"
 python = "^3.12"
 yt-dlp = "^2024.5.27"
 usecases = {path = "../usecases/dist/usecases-0.1.0-py3-none-any.whl"}
+peewee = "^3.17.5"
 
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.2.2"
 coverage = "^7.5.3"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.4"
 
 [build-system]
 requires = ["poetry-core"]
