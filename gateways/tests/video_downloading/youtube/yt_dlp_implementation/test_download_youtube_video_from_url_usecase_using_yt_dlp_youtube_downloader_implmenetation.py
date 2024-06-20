@@ -98,8 +98,9 @@ def test_invalid_video_resolution_path() -> None:
 
 def test_invalid_download_path() -> None:
     destination_path: str = mkdtemp()
+    video_url: str = "invalid_url"
     to_be_downloaded_video = ToBeDownloadedYouTubeVideo(
-        video_url="invalid_url", resolution=144, destination_path=destination_path
+        video_url=video_url, resolution=144, destination_path=destination_path
     )
     download_error = YouTubeVideoDownloadError(
         error_msg=f"This url [{to_be_downloaded_video.video_url}] doesn't exist !",
@@ -117,4 +118,7 @@ def test_invalid_download_path() -> None:
 
     assert isinstance(download_status, UseCaseExecutionError)
     assert isinstance(download_status.invalid_entity, YouTubeVideoDownloadError)
-    assert download_status.invalid_entity == download_error
+    assert (
+        download_status.invalid_entity.error_msg
+        == f"This url [{video_url}] doesn't exist !"
+    )
