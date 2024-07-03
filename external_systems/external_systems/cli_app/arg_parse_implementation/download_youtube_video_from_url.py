@@ -61,6 +61,7 @@ def parse_args() -> Namespace:
         help="The number of seconds to tomeout if there is an error while downloading",
         type=int,
         required=False,
+        default=9,
     )
     parser.add_argument(
         "-dr",
@@ -68,6 +69,7 @@ def parse_args() -> Namespace:
         help="The number of attempts to download if there is an error",
         type=int,
         required=False,
+        default=3,
     )
 
     return parser.parse_args()
