@@ -1,3 +1,4 @@
+import traceback
 from os import path
 from typing import Any, Callable
 
@@ -83,7 +84,6 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
         yt_options: dict[str, Any] = dict(
             format=f"bv*[height<={video_resolution}]+ba",
             socket_timeout=download_timeout,
-            extractor_retries=download_retries,
             progress_hooks=[__on_progress_hook],
             postprocessor_hooks=[],
             paths=dict(home=destination_path),
@@ -105,22 +105,40 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
                     resolution=video_resolution,
                 )
             except Exception as ex:
-                if "Failed to extract any player response" in str(ex):
-                    return YouTubeVideoDownloadError(
-                        error_msg="There is no internet connectivity !",
-                        invalid_entity=to_be_downloaded_youtube_video,
-                    )
-                elif "Video unavailable" in str(ex):
-                    return YouTubeVideoDownloadError(
-                        error_msg=f"This url [{video_url}] doesn't exist !",
-                        invalid_entity=to_be_downloaded_youtube_video,
-                    )
-                elif "Requested format is not available" in str(ex):
-                    return YouTubeVideoDownloadError(
-                        error_msg=f"This video resolution [{video_resolution}] is not available for this video !",
-                        invalid_entity=to_be_downloaded_youtube_video,
-                    )
+                if download_retries <= 0:
+                    traceback.print_exc()
+                    if "Failed to extract any player response" in str(ex):
+                        return YouTubeVideoDownloadError(
+                            error_msg="There is no internet connectivity !",
+                            invalid_entity=to_be_downloaded_youtube_video,
+                        )
+                    elif "Video unavailable" in str(ex):
+                        return YouTubeVideoDownloadError(
+                            error_msg=f"This url [{video_url}] doesn't exist !",
+                            invalid_entity=to_be_downloaded_youtube_video,
+                        )
+                    elif "Requested format is not available" in str(ex):
+                        return YouTubeVideoDownloadError(
+                            error_msg=f"This video resolution [{video_resolution}] is not available for this video !",
+                            invalid_entity=to_be_downloaded_youtube_video,
+                        )
 
-                return YouTubeVideoDownloadError(
-                    error_msg=str(ex), invalid_entity=to_be_downloaded_youtube_video
-                )
+                    return YouTubeVideoDownloadError(
+                        error_msg=str(ex), invalid_entity=to_be_downloaded_youtube_video
+                    )
+                else:
+                    remaining_retry_attempts: int = download_retries - 1
+                    print()
+                    print(
+                        f"Retrying again, [ramaining attempts={remaining_retry_attempts}]"
+                    )
+                    print()
+                    return self.download_from_url(
+                        video_url=video_url,
+                        video_resolution=video_resolution,
+                        destination_path=destination_path,
+                        download_retries=remaining_retry_attempts,
+                        download_timeout=download_timeout,
+                        on_progress_callback=on_progress_callback,
+                        on_complete_callback=on_complete_callback,
+                    )
