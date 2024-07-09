@@ -1,5 +1,6 @@
 import traceback
 from os import path
+from time import sleep
 from typing import Any, Callable
 
 from domain.entity.error.video.youtube import YouTubeVideoDownloadError
@@ -83,7 +84,6 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
 
         yt_options: dict[str, Any] = dict(
             format=f"bv*[height<={video_resolution}]+ba",
-            socket_timeout=download_timeout,
             progress_hooks=[__on_progress_hook],
             postprocessor_hooks=[],
             paths=dict(home=destination_path),
@@ -130,9 +130,10 @@ class YtDlpYouTubeDownloader(YouTubeVideoDownloaderInterface):
                     remaining_retry_attempts: int = download_retries - 1
                     print()
                     print(
-                        f"Retrying again, [ramaining attempts={remaining_retry_attempts}]"
+                        f"Retrying again after [{download_timeout}] seconds, [ramaining attempts={remaining_retry_attempts}]"
                     )
                     print()
+                    sleep(download_timeout)
                     return self.download_from_url(
                         video_url=video_url,
                         video_resolution=video_resolution,
